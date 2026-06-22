@@ -1,7 +1,11 @@
+import Header from './Header';
+import Hero from './Hero';
+
 export default function App() {
   return (
     <main>
-      <h1>Artist Platform</h1>
+      <Header />
+      <Hero />
     </main>
   );
 }
