@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { heroData } from './mockData';
 
-const words = ['Artists', 'Fans', 'Venues'];
+const { title, rotatingWords, subtitle, searchPlaceholder, ctaText } = heroData;
 
 export default function Hero() {
   const [displayedText, setDisplayedText] = useState('');
@@ -8,7 +9,7 @@ export default function Hero() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const currentWord = words[currentWordIndex];
+    const currentWord = rotatingWords[currentWordIndex];
     const typingSpeed = isDeleting ? 50 : 100;
 
     const timeout = setTimeout(() => {
@@ -25,29 +26,26 @@ export default function Hero() {
 
         if (nextText === '') {
           setIsDeleting(false);
-          setCurrentWordIndex((index) => (index + 1) % words.length);
+          setCurrentWordIndex((index) => (index + 1) % rotatingWords.length);
         }
       }
     }, typingSpeed);
 
     return () => clearTimeout(timeout);
-  }, [displayedText, isDeleting, currentWordIndex]);
+  }, [displayedText, isDeleting, currentWordIndex, rotatingWords]);
 
   return (
     <section className="hero-section">
       <h2 className="hero-title">
-        Discover Amazing
+        {title}
         <span className="typing-text"> {displayedText}</span>
         <span className="typing-cursor">|</span>
       </h2>
-      <p className="hero-subtitle">
-        Connect artists with fans and venues through one simple platform designed
-        for discovering talent and booking unforgettable experiences.
-      </p>
+      <p className="hero-subtitle">{subtitle}</p>
 
       <div className="search-area">
-        <input type="text" placeholder="Search artists, venues..." />
-        <button type="button">Get Started</button>
+        <input type="text" placeholder={searchPlaceholder} />
+        <button type="button">{ctaText}</button>
       </div>
     </section>
   );
