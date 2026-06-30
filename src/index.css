@@ -57,6 +57,16 @@ main {
   line-height: 1.15;
 }
 
+.typing-text {
+  display: inline-block;
+  min-width: 6ch;
+}
+
+.typing-cursor {
+  display: inline-block;
+  animation: blink 0.8s step-end infinite;
+}
+
 .hero-subtitle {
   max-width: 640px;
   line-height: 1.6;
@@ -88,4 +98,10 @@ h1,
 h2,
 p {
   margin: 0;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
