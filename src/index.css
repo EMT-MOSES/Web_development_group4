@@ -1,3 +1,4 @@
+/* Reset */
 html {
   scroll-behavior: smooth;
 }
@@ -10,10 +11,18 @@ body {
   color: #ffffff;
 }
 
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+/* Layout */
 main {
   padding: 2rem;
 }
 
+/* Header */
 .site-header {
   position: sticky;
   top: 0;
@@ -56,6 +65,7 @@ main {
   color: #a7f3d0;
 }
 
+/* Hero */
 .hero-section {
   max-width: 760px;
   margin: 3.5rem auto 0;
@@ -88,6 +98,7 @@ main {
   color: #d8fffb;
 }
 
+/* Search */
 .search-area {
   display: flex;
   gap: 0.75rem;
@@ -116,6 +127,7 @@ main {
   box-shadow: 0 0 0 2px rgba(167, 243, 208, 0.35);
 }
 
+/* Buttons */
 .search-area button {
   padding: 0.9rem 1.4rem;
   font-size: 1rem;
@@ -138,22 +150,7 @@ main {
   outline-offset: 2px;
 }
 
-.section {
-  margin-bottom: 1rem;
-}
-
-h1,
-h2,
-p {
-  margin: 0;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
+/* Responsive */
 @media (max-width: 640px) {
   main {
     padding: 1rem;
@@ -169,5 +166,11 @@ p {
 
   .search-area {
     flex-direction: column;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }

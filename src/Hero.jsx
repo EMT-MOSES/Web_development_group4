@@ -13,21 +13,19 @@ export default function Hero() {
     const typingSpeed = isDeleting ? 50 : 100;
 
     const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        const nextText = currentWord.slice(0, displayedText.length + 1);
-        setDisplayedText(nextText);
+      const nextText = isDeleting
+        ? currentWord.slice(0, displayedText.length - 1)
+        : currentWord.slice(0, displayedText.length + 1);
 
-        if (nextText === currentWord) {
-          setIsDeleting(true);
-        }
-      } else {
-        const nextText = currentWord.slice(0, displayedText.length - 1);
-        setDisplayedText(nextText);
+      setDisplayedText(nextText);
 
-        if (nextText === '') {
-          setIsDeleting(false);
-          setCurrentWordIndex((index) => (index + 1) % rotatingWords.length);
-        }
+      if (!isDeleting && nextText === currentWord) {
+        setIsDeleting(true);
+      }
+
+      if (isDeleting && nextText === '') {
+        setIsDeleting(false);
+        setCurrentWordIndex((index) => (index + 1) % rotatingWords.length);
       }
     }, typingSpeed);
 
