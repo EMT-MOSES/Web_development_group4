@@ -3,13 +3,16 @@ import AuthLayout from './AuthLayout';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 
+const initialFormData = {
+  name: '',
+  email: '',
+  password: '',
+  role: 'Artist',
+};
+
 export default function Signup() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: 'Artist',
-  });
+  const [formData, setFormData] = useState(initialFormData);
+  const [feedback, setFeedback] = useState({ type: '', message: '' });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -19,9 +22,41 @@ export default function Signup() {
     }));
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const nextUser = {
+      id: Date.now(),
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
+      role: formData.role.toLowerCase(),
+    };
+
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const duplicateEmail = existingUsers.some(
+      (user) => user.email.toLowerCase() === nextUser.email,
+    );
+
+    if (duplicateEmail) {
+      setFeedback({
+        type: 'error',
+        message: 'An account with this email already exists.',
+      });
+      return;
+    }
+
+    localStorage.setItem('users', JSON.stringify([...existingUsers, nextUser]));
+    setFeedback({
+      type: 'success',
+      message: 'Account created successfully!',
+    });
+    setFormData(initialFormData);
+  };
+
   return (
     <AuthLayout kicker="Create your account" title="Sign Up">
-      <form className="auth-form">
+      <form className="auth-form" onSubmit={handleSubmit}>
         <AuthInput
           type="text"
           name="name"
@@ -63,7 +98,13 @@ export default function Signup() {
           </select>
         </label>
 
-        <AuthButton type="button">Sign Up</AuthButton>
+        <AuthButton type="submit">Sign Up</AuthButton>
+
+        {feedback.message ? (
+          <p className={`auth-message ${feedback.type}`} aria-live="polite">
+            {feedback.message}
+          </p>
+        ) : null}
       </form>
 
       <p className="auth-text">
