@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Artist",
+      "email": "artist@test.com",
+      "password": "1234",
+      "role": "artist"
+    },
+    {
+      "id": 2,
+      "name": "Sarah Fan",
+      "email": "fan@test.com",
+      "password": "1234",
+      "role": "fan"
+    },
+    {
+      "id": 3,
+      "name": "Royal Arena",
+      "email": "venue@test.com",
+      "password": "1234",
+      "role": "venue"
+    }
+  ]
+}
