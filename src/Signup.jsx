@@ -1,51 +1,77 @@
+import { useState } from 'react';
+import AuthLayout from './AuthLayout';
+import AuthInput from './AuthInput';
+import AuthButton from './AuthButton';
+
 export default function Signup() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'Artist',
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((currentData) => ({
+      ...currentData,
+      [name]: value,
+    }));
+  };
+
   return (
-    <main className="auth-page">
-      <section className="auth-card" aria-labelledby="signup-title">
-        <div className="auth-header">
-          <p className="auth-kicker">Create your account</p>
-          <h2 id="signup-title" className="auth-title">
-            Sign Up
-          </h2>
-        </div>
+    <AuthLayout kicker="Create your account" title="Sign Up">
+      <form className="auth-form">
+        <AuthInput
+          type="text"
+          name="name"
+          value={formData.name}
+          placeholder="Full Name"
+          onChange={handleChange}
+          required
+        />
 
-        <form className="auth-form">
-          <label className="auth-field">
-            <span>Full Name</span>
-            <input className="auth-input" type="text" placeholder="Your full name" />
-          </label>
+        <AuthInput
+          type="email"
+          name="email"
+          value={formData.email}
+          placeholder="Email"
+          onChange={handleChange}
+          required
+        />
 
-          <label className="auth-field">
-            <span>Email</span>
-            <input className="auth-input" type="email" placeholder="you@example.com" />
-          </label>
+        <AuthInput
+          type="password"
+          name="password"
+          value={formData.password}
+          placeholder="Password"
+          onChange={handleChange}
+          required
+        />
 
-          <label className="auth-field">
-            <span>Password</span>
-            <input className="auth-input" type="password" placeholder="Create a password" />
-          </label>
+        <label className="auth-field">
+          <span>Role</span>
+          <select
+            className="auth-input auth-select"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+          >
+            <option value="Artist">Artist</option>
+            <option value="Fan">Fan</option>
+            <option value="Venue">Venue</option>
+          </select>
+        </label>
 
-          <label className="auth-field">
-            <span>Role</span>
-            <select className="auth-input auth-select" defaultValue="Artist">
-              <option value="Artist">Artist</option>
-              <option value="Fan">Fan</option>
-              <option value="Venue">Venue</option>
-            </select>
-          </label>
+        <AuthButton type="button">Sign Up</AuthButton>
+      </form>
 
-          <button className="auth-button" type="button">
-            Sign Up
-          </button>
-        </form>
-
-        <p className="auth-text">
-          Already have an account?{' '}
-          <a className="auth-link" href="/">
-            Log In
-          </a>
-        </p>
-      </section>
-    </main>
+      <p className="auth-text">
+        Already have an account?{' '}
+        <a className="auth-link" href="/">
+          Log In
+        </a>
+      </p>
+    </AuthLayout>
   );
 }
