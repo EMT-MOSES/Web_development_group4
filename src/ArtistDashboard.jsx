@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import ArtistAnalytics from './ArtistAnalytics';
 import ArtistProfile from './ArtistProfile';
+import MusicManager from './MusicManager';
 
 function getCurrentUser() {
   try {
@@ -64,19 +66,9 @@ export default function ArtistDashboard() {
 
         {activeView === 'profile' ? <ArtistProfile /> : null}
 
-        {activeView === 'music' ? (
-          <article className="dashboard-card">
-            <h3 className="dashboard-card-title">My Music</h3>
-            <p className="dashboard-empty-state">Music management is coming soon.</p>
-          </article>
-        ) : null}
+        {activeView === 'music' ? <MusicManager /> : null}
 
-        {activeView === 'analytics' ? (
-          <article className="dashboard-card">
-            <h3 className="dashboard-card-title">Analytics</h3>
-            <p className="dashboard-empty-state">Analytics placeholder for future reporting.</p>
-          </article>
-        ) : null}
+        {activeView === 'analytics' ? <ArtistAnalytics /> : null}
       </section>
     </main>
   );
