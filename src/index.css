@@ -248,9 +248,13 @@ main {
 .auth-button:hover,
 .auth-button:focus-visible {
   background: #d1fae5;
+  transform: translateY(-1px);
 }
 
-.auth-button:focus-visible {
+.auth-button:focus-visible,
+.dashboard-menu-item:focus-visible,
+.dashboard-input:focus-visible,
+.nav-links a:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
@@ -443,6 +447,13 @@ main {
   box-shadow: 0 0 0 2px rgba(167, 243, 208, 0.35);
 }
 
+.search-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
 .dashboard-textarea {
   min-height: 120px;
   resize: vertical;
@@ -600,7 +611,8 @@ main {
 /* Responsive */
 @media (max-width: 900px) {
   .dashboard-page,
-  .dashboard-profile-layout {
+  .dashboard-profile-layout,
+  .search-controls {
     grid-template-columns: 1fr;
   }
 }
@@ -623,6 +635,11 @@ main {
   }
 
   .dashboard-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fan-grid,
+  .music-card-grid {
     grid-template-columns: 1fr;
   }
 }

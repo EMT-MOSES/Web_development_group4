@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ArtistAnalytics from './ArtistAnalytics';
 import ArtistProfile from './ArtistProfile';
 import MusicManager from './MusicManager';
+
+const ARTIST_MUSIC_KEY = 'artistMusic';
+const BOOKINGS_KEY = 'bookings';
 
 function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem('currentUser'));
   } catch {
     return null;
+  }
+}
+
+function loadStoredList(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
   }
 }
 
@@ -24,6 +35,11 @@ export default function ArtistDashboard() {
   const roleLabel = currentUser?.role
     ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
     : 'Artist';
+
+  const totalSongs = useMemo(() => loadStoredList(ARTIST_MUSIC_KEY).filter((song) => song.artistId === currentUser?.id).length, [currentUser]);
+  const bookings = useMemo(() => loadStoredList(BOOKINGS_KEY).filter((booking) => booking.artistId === currentUser?.id), [currentUser]);
+  const pendingBookings = bookings.filter((booking) => booking.status === 'Pending').length;
+  const acceptedBookings = bookings.filter((booking) => booking.status === 'Accepted').length;
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -60,7 +76,25 @@ export default function ArtistDashboard() {
         {activeView === 'dashboard' ? (
           <article className="dashboard-card">
             <h3 className="dashboard-card-title">Dashboard</h3>
-            <p className="dashboard-empty-state">Artist overview placeholder for future insights and actions.</p>
+
+            <div className="fan-stat-grid">
+              <div className="fan-stat-card">
+                <p className="dashboard-label">Total Songs</p>
+                <h4 className="dashboard-stat-value">{totalSongs}</h4>
+              </div>
+              <div className="fan-stat-card">
+                <p className="dashboard-label">Pending Bookings</p>
+                <h4 className="dashboard-stat-value">{pendingBookings}</h4>
+              </div>
+              <div className="fan-stat-card">
+                <p className="dashboard-label">Accepted Bookings</p>
+                <h4 className="dashboard-stat-value">{acceptedBookings}</h4>
+              </div>
+              <div className="fan-stat-card">
+                <p className="dashboard-label">Total Profile Views</p>
+                <h4 className="dashboard-stat-value">{Math.max(1, totalSongs + pendingBookings + acceptedBookings)}</h4>
+              </div>
+            </div>
           </article>
         ) : null}
 

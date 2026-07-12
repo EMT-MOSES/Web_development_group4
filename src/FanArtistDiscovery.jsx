@@ -1,3 +1,6 @@
+import { useEffect, useMemo, useState } from 'react';
+import { filterAndSortArtists } from './utils/searchUtils';
+
 const ARTIST_PROFILES_KEY = 'artistProfiles';
 const ARTIST_MUSIC_KEY = 'artistMusic';
 
@@ -9,9 +12,45 @@ function loadStoredList(key) {
   }
 }
 
+const defaultGenres = ['All Genres', 'Afrobeats', 'Hip Hop', 'Gospel', 'R&B', 'Pop', 'Jazz'];
+
 export default function FanArtistDiscovery({ selectedArtist, onSelectArtist }) {
   const artistProfiles = loadStoredList(ARTIST_PROFILES_KEY);
   const artistMusic = loadStoredList(ARTIST_MUSIC_KEY);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [genreFilter, setGenreFilter] = useState('All Genres');
+  const [sortValue, setSortValue] = useState('alphabetical');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 120);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const genreOptions = useMemo(() => {
+    const discovered = new Set(defaultGenres);
+    artistProfiles.forEach((artist) => {
+      if (artist.genre) {
+        discovered.add(artist.genre);
+      }
+    });
+
+    return Array.from(discovered);
+  }, [artistProfiles]);
+
+  const filteredArtists = useMemo(
+    () => filterAndSortArtists(artistProfiles, searchTerm, genreFilter, sortValue),
+    [artistProfiles, searchTerm, genreFilter, sortValue],
+  );
+
+  if (loading) {
+    return (
+      <article className="dashboard-card">
+        <h3 className="dashboard-card-title">Browse Artists</h3>
+        <p className="dashboard-empty-state">Loading artists...</p>
+      </article>
+    );
+  }
 
   if (artistProfiles.length === 0) {
     return (
@@ -26,34 +65,61 @@ export default function FanArtistDiscovery({ selectedArtist, onSelectArtist }) {
     <article className="dashboard-card">
       <h3 className="dashboard-card-title">Browse Artists</h3>
 
-      <div className="fan-grid">
-        {artistProfiles.map((artist) => (
-          <div key={artist.userId} className="fan-card">
-            <div className="fan-card-image">
-              {artist.profileImage ? (
-                <img src={artist.profileImage} alt={artist.stageName || 'Artist'} />
-              ) : (
-                <span>🎤</span>
-              )}
-            </div>
+      <div className="search-controls">
+        <input
+          className="dashboard-input"
+          type="text"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Search artists by stage name, genre, or location"
+        />
 
-            <div className="fan-card-content">
-              <p className="dashboard-label">Stage Name</p>
-              <h4>{artist.stageName || 'Untitled Artist'}</h4>
-              <p className="dashboard-label">Genre</p>
-              <p>{artist.genre || 'No genre listed'}</p>
-              <p className="dashboard-label">Location</p>
-              <p>{artist.location || 'Unknown location'}</p>
-              <p className="dashboard-label">Bio</p>
-              <p>{artist.bio || 'No bio available yet.'}</p>
+        <select className="dashboard-input" value={genreFilter} onChange={(event) => setGenreFilter(event.target.value)}>
+          {genreOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
 
-              <button className="auth-button" type="button" onClick={() => onSelectArtist(artist)}>
-                View Profile
-              </button>
-            </div>
-          </div>
-        ))}
+        <select className="dashboard-input" value={sortValue} onChange={(event) => setSortValue(event.target.value)}>
+          <option value="alphabetical">A → Z</option>
+          <option value="recently-joined">Recently Joined</option>
+        </select>
       </div>
+
+      {filteredArtists.length === 0 ? (
+        <p className="dashboard-empty-state">No artists found.</p>
+      ) : (
+        <div className="fan-grid">
+          {filteredArtists.map((artist) => (
+            <div key={artist.userId} className="fan-card">
+              <div className="fan-card-image">
+                {artist.profileImage ? (
+                  <img src={artist.profileImage} alt={artist.stageName || 'Artist'} />
+                ) : (
+                  <span>🎤</span>
+                )}
+              </div>
+
+              <div className="fan-card-content">
+                <p className="dashboard-label">Stage Name</p>
+                <h4>{artist.stageName || 'Untitled Artist'}</h4>
+                <p className="dashboard-label">Genre</p>
+                <p>{artist.genre || 'No genre listed'}</p>
+                <p className="dashboard-label">Location</p>
+                <p>{artist.location || 'Unknown location'}</p>
+                <p className="dashboard-label">Bio</p>
+                <p>{artist.bio || 'No bio available yet.'}</p>
+
+                <button className="auth-button" type="button" onClick={() => onSelectArtist(artist)}>
+                  View Profile
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {selectedArtist ? (
         <div className="fan-profile-layout">
