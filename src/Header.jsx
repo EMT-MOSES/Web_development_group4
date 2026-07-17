@@ -22,33 +22,5 @@ export default function Header() {
     localStorage.removeItem('currentUser');
     window.location.hash = '#/login';
   };
-
-  return (
-    <header className="site-header">
-      <a href="#/" className="brand">StageLink Kenya</a>
-
-      <nav aria-label="Primary navigation" className="nav-links">
-        {currentUser ? (
-          <>
-            <span className="nav-greeting">Hi, {currentUser.name}</span>
-            <a className="nav-link" href={dashboardRoute}>
-              Dashboard
-            </a>
-            <button type="button" className="nav-link nav-logout" onClick={handleLogout}>
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <a className="nav-link" href="#/login">
-              Log In
-            </a>
-            <a className="nav-link nav-cta" href="#/signup">
-              Sign Up
-            </a>
-          </>
-        )}
-      </nav>
-    </header>
-  );
 }
+

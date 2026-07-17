@@ -1,3 +1,4 @@
+
 const FOOTER_COLUMNS = [
   {
     title: 'Platform',
