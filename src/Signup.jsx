@@ -10,12 +10,45 @@ const initialFormData = {
   role: 'Artist',
 };
 
+const ROUTE_BY_ROLE = {
+  artist: '#/artist-dashboard',
+  fan: '#/fan-dashboard',
+  venue: '#/venue-dashboard',
+};
+
+const VALID_ROLES = ['Artist', 'Fan', 'Venue'];
+
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
+// Reads a role from a hash like "#/signup?role=artist" so links such as
+// the homepage's "Join as Artist" / "List Your Venue" CTA buttons can
+// preselect the right option in the dropdown below.
+function getRoleFromHash() {
+  const hash = window.location.hash;
+  const queryIndex = hash.indexOf('?');
+
+  if (queryIndex === -1) {
+    return null;
+  }
+
+  const params = new URLSearchParams(hash.slice(queryIndex + 1));
+  const rawRole = params.get('role');
+
+  if (!rawRole) {
+    return null;
+  }
+
+  const normalized = rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
+  return VALID_ROLES.includes(normalized) ? normalized : null;
+}
+
 export default function Signup() {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(() => ({
+    ...initialFormData,
+    role: getRoleFromHash() || initialFormData.role,
+  }));
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,11 +106,19 @@ export default function Signup() {
       };
 
       localStorage.setItem('users', JSON.stringify([...existingUsers, nextUser]));
+
+      // Auto-login immediately after signup, same as Login.jsx does,
+      // so the new user lands straight on their dashboard instead of
+      // having to log in again manually.
+      localStorage.setItem('currentUser', JSON.stringify(nextUser));
+
       setFeedback({
         type: 'success',
-        message: 'Account created successfully!',
+        message: 'Account created successfully! Redirecting...',
       });
       setFormData(initialFormData);
+
+      window.location.hash = ROUTE_BY_ROLE[nextUser.role] || '#/artist-dashboard';
     } finally {
       setIsSubmitting(false);
     }
