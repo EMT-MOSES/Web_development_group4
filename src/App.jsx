@@ -6,6 +6,9 @@ import Signup from './Signup';
 import ArtistDashboard from './ArtistDashboard';
 import FanDashboard from './FanDashboard';
 import VenueDashboard from './VenueDashboard';
+import Footer from './Footer';
+
+const THEME_STORAGE_KEY = 'artist-platform-theme';
 
 function getRoute() {
   const hash = window.location.hash.replace(/^#\/?/, '');
@@ -17,8 +20,23 @@ function getRoute() {
   return hash;
 }
 
+function getInitialTheme() {
+  if (typeof window === 'undefined') {
+    return 'dark';
+  }
+
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === 'light' || stored === 'dark') {
+    return stored;
+  }
+
+  const prefersLight = window.matchMedia?.('(prefers-color-scheme: light)').matches;
+  return prefersLight ? 'light' : 'dark';
+}
+
 export default function App() {
   const [route, setRoute] = useState(getRoute);
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -31,6 +49,15 @@ export default function App() {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((current) => (current === 'light' ? 'dark' : 'light'));
+  };
 
   let content = <Hero />;
 
@@ -47,9 +74,12 @@ export default function App() {
   }
 
   return (
-    <main>
-      <Header />
-      {content}
-    </main>
+    <>
+      <main>
+        <Header theme={theme} onToggleTheme={toggleTheme} />
+        {content}
+      </main>
+      <Footer />
+    </>
   );
 }
